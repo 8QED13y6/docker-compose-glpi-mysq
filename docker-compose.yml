@@ -2,7 +2,7 @@
 version: '3.3'
 
 services:
-  mysql :
+  glpi_mysql :
     image : mysql:8-debian
     container_name : glpi_mysql
     hostname: mysql
