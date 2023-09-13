@@ -17,4 +17,4 @@ if [ ! -f ssl/ssl.crt ] || [ ! -f ssl/ssl.key ]; then
     openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout ssl/ssl.key -out ssl/ssl.crt -subj "/C=FR/ST=France/L=Paris/O=entreprise/CN=localhost" 
 fi
 
-docker-compose build && docker-compose up -d
+docker compose build && docker compose up -d
