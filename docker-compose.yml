@@ -4,7 +4,7 @@ version: '3.3'
 services:
   mysql :
     image : mysql:8-debian
-    container_name : mysql
+    container_name : glpi_mysql
     hostname: mysql
     restart: always
     expose :
@@ -13,7 +13,7 @@ services:
       MYSQL_RANDOM_ROOT_PASSWORD: "true"
     volumes :
       - ./sql/:/docker-entrypoint-initdb.d/
-      - sqldata:/var/lib/mysql
+      - glpi_sqldata:/var/lib/mysql
     networks:
       glpi_project:
   glpi:
@@ -22,7 +22,7 @@ services:
     hostname: glpi
     restart: always
     ports:
-      - 443:443
+      - 4443:443
     env_file:
       - secrets.env
     volumes:
@@ -30,45 +30,18 @@ services:
       - ./ssl/ssl.crt:/etc/ssl/glpi.crt
       - ./front/vhost_glpi.conf:/etc/nginx/sites-available/glpi.conf
       - ./scripts/glpi-setup.sh:/usr/local/bin/glpi-setup.sh
-      - glpidata:/var/www/html/glpi/
+      - glpi_data:/var/www/html/glpi/
     networks:
       glpi_project:
     depends_on:
-      - mysql
+      - glpi_mysql
     command: /usr/local/bin/glpi-setup.sh
-  ocs:
-    image: ocsinventory/ocsinventory-docker-image:2.10
-    container_name: ocs
-    hostname: ocs
-    restart: always
-    ports:
-      - 8443:443
-    env_file:
-      - secrets.env
-    volumes:
-      - ./ssl/ssl.key:/etc/ssl/private/ocs.key
-      - ./ssl/ssl.crt:/etc/ssl/certs/ocs.crt
-      - ./front/vhost_ocs.conf:/etc/nginx/sites-available/ocs.conf
-      - ./scripts/ocs-setup.sh:/usr/local/bin/ocs-setup.sh
-      - ./front/ocs_nginx.conf:/root/nginx.conf
-      - perlcomdata:/etc/ocsinventory-server
-      - extensionsdata:/usr/share/ocsinventory-reports/ocsreports/extensions
-      - varlibdata:/var/lib/ocsinventory-reports
-      - httpdconfdata:/etc/httpd/conf.d
-    networks:
-      glpi_project:
-    depends_on:
-      - mysql
-    command: /usr/local/bin/ocs-setup.sh
 
  
 networks:
   glpi_project:
 
 volumes:
-  sqldata:
-  glpidata:
-  perlcomdata:
-  extensionsdata:
-  varlibdata:
-  httpdconfdata:
+  glpi_sqldata:
+  glpi_data:
+
